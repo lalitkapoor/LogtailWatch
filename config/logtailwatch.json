@@ -1,7 +1,5 @@
 {
-  "host": "<HOST NAME>",
-  "port": "<PORT>",
-  "retentionPeriod": 3,
+  "retentionPeriod": 180,
   "sources": [
     {
       "prefix": "API-Gateway-Execution-Logs_",

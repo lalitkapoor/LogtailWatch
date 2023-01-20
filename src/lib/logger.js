@@ -1,10 +1,11 @@
 // Dependencies
-var config = require('../../config/paperwatch.json');
-var zlib = require('zlib');
-var winston = require('winston');
-require('winston-papertrail').Papertrail;
+const config = require("../../config/logtailwatch.json");
+const zlib = require("zlib");
+const winston = require("winston");
+const { Logtail } = require("@logtail/node");
+const { LogtailTransport } = require("@logtail/winston");
 
-const logLevelExtractorRegex = new RegExp(config.logLevelExtractor)
+const logLevelExtractorRegex = new RegExp(config.logLevelExtractor);
 
 const getLogLevel = (message) => {
   const result = logLevelExtractorRegex.exec(message);
@@ -14,43 +15,33 @@ const getLogLevel = (message) => {
     return config.defaultLogLevel;
   }
   return result[1];
-}
+};
 
 // Extract and unzip log data from event object
-exports.extract =  function(event, callback){
+exports.extract = function (event, callback) {
+  const payload = Buffer.from(event.awslogs.data, "base64");
 
-  var payload = Buffer.from(event.awslogs.data, 'base64');
-
-  zlib.gunzip(payload, function(err, result){
-    if(err){
+  zlib.gunzip(payload, function (err, result) {
+    if (err) {
       console.error("Unable to unzip event payload");
       return callback(err);
     }
-    result = JSON.parse(result.toString('utf-8'));
-    callback(null, result);
+    callback(null, JSON.parse(result.toString("utf-8")));
   });
-
 };
 
 // Post logs using the given transport
-exports.post = function(data, transport, callback){
+exports.post = function (meta, data, callback) {
   // Create a new Logger using the transport parameter
-  var logger = new winston.Logger({ transports: [ transport ] });
+  const logtail = new Logtail(process.env.LOGTAIL_SOURCE_TOKEN);
+  const logtailTransport = new LogtailTransport(logtail);
+  const logger = winston.createLogger({ transports: [logtailTransport] });
 
-  // If the trainsport fails, return error
-  transport.on('error', function(err){
-    console.error("Error:", err.code, "-", err.message);
-    return callback(err);
-  });
-
-  // Transport connected, log all logEvents
-  transport.on('connect', function(){
-      data.logEvents.forEach(function(logEvent){
-        const logLevel = getLogLevel(logEvent.message);
-        logger.log(logLevel, logEvent.message);
-      });
-      // Close transport, return successful
-      logger.close();
+  data.logEvents.forEach(function (logEvent) {
+    const logLevel = getLogLevel(logEvent.message);
+    logger.log(logLevel, { meta, log: logEvent.message }, function (error) {
+      if (error) return callback(error);
       return callback();
+    });
   });
 };

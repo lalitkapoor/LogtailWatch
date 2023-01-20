@@ -14,12 +14,13 @@
     "url": "https://github.com/Signiant/PaperWatch.git"
   },
   "dependencies": {
+    "@logtail/node": "^0.1.15",
+    "@logtail/winston": "^0.1.15",
     "aws-sdk": "^2.708.0",
-    "winston": "^2.4.5",
-    "winston-papertrail": "^1.0.5"
+    "winston": "^3.8.2"
   },
   "scripts": {
-    "build": "npm install; zip -r lambda.zip ."
+    "build": "npm install; zip -r lambda.zip . -x .\\*"
   },
   "license": "MIT"
 }
