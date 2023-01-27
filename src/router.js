@@ -1,11 +1,11 @@
-const logger = require("./lib/logger");
-const lambda = require("./loggers/lambda");
-const apiGateway = require("./loggers/apiGateway");
-const ecs = require("./loggers/ecs");
-const generic = require("./loggers/generic");
+import { extract } from "./lib/logger.js";
+import lambda from "./loggers/lambda.js";
+import apiGateway from "./loggers/apiGateway.js";
+import ecs from "./loggers/ecs.js";
+import generic from "./loggers/generic.js";
 
-exports.handler = function (event, context, callback) {
-  logger.extract(event, function (err, data) {
+export function handler(event, context, callback) {
+  extract(event, function (err, data) {
     if (err) return callback(err);
 
     const logGroup = data.logGroup;
@@ -15,4 +15,4 @@ exports.handler = function (event, context, callback) {
       return apiGateway(data, callback);
     return generic(data, callback);
   });
-};
+}

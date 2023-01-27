@@ -1,9 +1,9 @@
 // Dependencies
-const config = require("../../config/logtailwatch.json");
-const zlib = require("zlib");
-const winston = require("winston");
-const { Logtail } = require("@logtail/node");
-const { LogtailTransport } = require("@logtail/winston");
+import config from "../config.js";
+import zlib from "zlib";
+import winston from "winston";
+import { Logtail } from "@logtail/node";
+import { LogtailTransport } from "@logtail/winston";
 
 const logLevelExtractorRegex = new RegExp(config.logLevelExtractor);
 
@@ -18,7 +18,7 @@ const getLogLevel = (message) => {
 };
 
 // Extract and unzip log data from event object
-exports.extract = function (event, callback) {
+export function extract(event, callback) {
   const payload = Buffer.from(event.awslogs.data, "base64");
 
   zlib.gunzip(payload, function (err, result) {
@@ -28,10 +28,10 @@ exports.extract = function (event, callback) {
     }
     callback(null, JSON.parse(result.toString("utf-8")));
   });
-};
+}
 
 // Post logs using the given transport
-exports.post = function (meta, data, callback) {
+export function post(meta, data, callback) {
   // Create a new Logger using the transport parameter
   const logtail = new Logtail(process.env.LOGTAIL_SOURCE_TOKEN);
   const logtailTransport = new LogtailTransport(logtail);
@@ -44,4 +44,4 @@ exports.post = function (meta, data, callback) {
       return callback();
     });
   });
-};
+}

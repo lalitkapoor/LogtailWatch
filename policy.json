@@ -1,0 +1,21 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "Logging",
+      "Action": [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+      ],
+      "Effect": "Allow",
+      "Resource": "arn:aws:logs:*:*:*:*:*"
+    },
+    {
+      "Sid": "APIMapping",
+      "Action": ["apigateway:GET"],
+      "Effect": "Allow",
+      "Resource": "arn:aws:apigateway:*::/*"
+    }
+  ]
+}

@@ -1,5 +1,7 @@
 // Dependencies
-const AWS = require("aws-sdk");
+import AWS from "aws-sdk";
+import { post } from "../lib/logger.js";
+
 const apiGateway = new AWS.APIGateway({ apiVersion: "2015-07-09" });
 
 let restApis = null;
@@ -20,11 +22,11 @@ export default function (data, callback) {
         }
       }
       const meta = getMeta(data);
-      logger.post(meta, data, callback);
+      post(meta, data, callback);
     });
   } else {
     const meta = getMeta(data);
-    logger.post(meta, data, callback);
+    post(meta, data, callback);
   }
 }
 

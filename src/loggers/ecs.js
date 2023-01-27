@@ -1,6 +1,5 @@
-const logger = require("../lib/logger");
+import { post } from "../lib/logger.js";
 
-// Handler function
 export default function (data, callback) {
   const meta = {
     type: "ecs",
@@ -8,5 +7,5 @@ export default function (data, callback) {
     program: data.logGroup.split("/").pop(),
   };
 
-  logger.post(meta, data, callback);
+  post(meta, data, callback);
 }

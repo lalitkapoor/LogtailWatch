@@ -1,6 +1,6 @@
-const logger = require("../lib/logger");
+import { post } from "../lib/logger.js";
 
 export default function (data, callback) {
   if (err) return callback(err);
-  logger.post(null, data, callback);
+  post(null, data, callback);
 }
