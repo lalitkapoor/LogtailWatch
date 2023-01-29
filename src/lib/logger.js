@@ -8,7 +8,9 @@ import { LogtailTransport } from "@logtail/winston";
 const logLevelExtractorRegex = new RegExp(config.logLevelExtractor);
 
 const getLogLevel = (message) => {
+  console.log("message", message);
   const result = logLevelExtractorRegex.exec(message);
+  console.log("result", result);
 
   if (!result || result.length === 0) {
     // if unable to extract, return the default log level

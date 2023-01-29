@@ -4,12 +4,6 @@ A tool for automatically forwarding CloudWatch logs to Logtail.
 
 ## Setup
 
-Install jq if you don't have it already
-
-```
-brew install jq
-```
-
 Ensure you have the following environment variables setup:
 
 `AWS_ACCESS_KEY_ID`
