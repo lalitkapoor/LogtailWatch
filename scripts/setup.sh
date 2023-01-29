@@ -1,3 +1,5 @@
+cd "$(dirname "$0")/.."
+
 aws iam create-role --role-name logtail-watch-role --assume-role-policy-document file://role.json
 aws iam create-policy --policy-name logtail-watch-policy --policy-document file://policy.json
 aws iam attach-role-policy --policy-arn "<TBD-TO-FILL-HERE>" --role-name logtail-watch-role
