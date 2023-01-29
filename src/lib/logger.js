@@ -7,16 +7,36 @@ import { LogtailTransport } from "@logtail/winston";
 
 const logLevelExtractorRegex = new RegExp(config.logLevelExtractor);
 
-const getLogLevel = (message) => {
-  console.log("message", message);
-  const result = logLevelExtractorRegex.exec(message);
-  console.log("result", result);
+const getLogLevelFromJSON = (message) => {
+  const level = message[config.logLevels.key];
+  if (level == null) return null;
+  const index = config.logLevels.values.indexOf(level);
+  if (index == -1) return null;
+  return config.logLevels.names[index];
+};
 
-  if (!result || result.length === 0) {
+const getLogLevelFromString = (message) => {
+  const level = logLevelExtractorRegex.exec(message);
+  if (!level || level.length === 0) {
     // if unable to extract, return the default log level
     return config.defaultLogLevel;
   }
-  return result[1];
+  return level[1];
+};
+
+const getLogLevel = (message) => {
+  console.log("message", message);
+
+  let level = null;
+  // try getting level from json if json message
+  try {
+    level = getLogLevelFromJSON(JSON.parse(message));
+  } catch (error) {}
+
+  // resort to regex search for level name
+  if (level == null) level = getLogLevelFromString(message);
+
+  console.log("level", level);
 };
 
 // Extract and unzip log data from event object
