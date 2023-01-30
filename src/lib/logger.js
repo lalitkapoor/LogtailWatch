@@ -35,7 +35,7 @@ const getLogLevel = (message) => {
 
   // resort to regex search for level name
   if (level == null) level = getLogLevelFromString(message);
-  if (level == null) level = "info";
+  if (level == null) level = config.defaultLogLevel;
 
   return level;
 };
