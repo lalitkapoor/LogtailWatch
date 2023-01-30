@@ -8,11 +8,13 @@ import { LogtailTransport } from "@logtail/winston";
 const logLevelExtractorRegex = new RegExp(config.logLevelExtractor);
 
 const getLogLevelFromJSON = (message) => {
-  const level = message[config.logLevels.key];
+  const level = message[config.logLevelKey];
   if (level == null) return null;
-  const index = config.logLevels.values.indexOf(level);
-  if (index == -1) return null;
-  return config.logLevels.names[index];
+
+  const levelName = Object.keys(config.logLevels).find(
+    (key) => config.logLevels[key] === level
+  );
+  return levelName;
 };
 
 const getLogLevelFromString = (message) => {
@@ -35,8 +37,10 @@ const getLogLevel = (message) => {
 
   // resort to regex search for level name
   if (level == null) level = getLogLevelFromString(message);
+  if (level == null) level = "info";
 
   console.log("level", level);
+  return level;
 };
 
 // Extract and unzip log data from event object
@@ -57,11 +61,15 @@ export function post(meta, data, callback) {
   // Create a new Logger using the transport parameter
   const logtail = new Logtail(process.env.LOGTAIL_SOURCE_TOKEN);
   const logtailTransport = new LogtailTransport(logtail);
-  const logger = winston.createLogger({ transports: [logtailTransport] });
+  const logger = winston.createLogger({
+    transports: [logtailTransport],
+    levels: config.logLevels,
+  });
 
   data.logEvents.forEach(function (logEvent) {
     const logLevel = getLogLevel(logEvent.message);
-    logger.log(logLevel, { meta, log: logEvent.message }, function (error) {
+    console.log("submitting with level", logLevel);
+    logger.log(logLevel, logEvent.message, { meta }, function (error) {
       if (error) return callback(error);
       return callback();
     });

@@ -1,12 +1,10 @@
 export default {
   logLevelExtractor:
-    ".* - (error|warn|info|verbose|debug|emerg|alert|crit|notice|silly): ",
+    ".* - (error|warn|info|verbose|debug|trace|emerg|alert|crit|notice|silly): ",
 
   // pino logger's default log levels
-  logLevels: {
-    key: "level",
-    names: ["trace", "debug", "info", "warn", "error", "fatal"],
-    values: [10, 20, 30, 40, 50, 60],
-  },
+  logLevelKey: "level",
+  logLevels: { trace: 10, debug: 20, info: 30, warn: 40, error: 50, fatal: 60 },
+
   defaultLogLevel: "info",
 };
