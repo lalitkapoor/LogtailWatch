@@ -27,8 +27,6 @@ const getLogLevelFromString = (message) => {
 };
 
 const getLogLevel = (message) => {
-  console.log("message", message);
-
   let level = null;
   // try getting level from json if json message
   try {
@@ -39,7 +37,6 @@ const getLogLevel = (message) => {
   if (level == null) level = getLogLevelFromString(message);
   if (level == null) level = "info";
 
-  console.log("level", level);
   return level;
 };
 
@@ -67,9 +64,11 @@ export function post(meta, data, callback) {
   });
 
   data.logEvents.forEach(function (logEvent) {
-    const logLevel = getLogLevel(logEvent.message);
-    console.log("submitting with level", logLevel);
-    logger.log(logLevel, logEvent.message, { meta }, function (error) {
+    const message = logEvent.message;
+    const level = getLogLevel(message);
+    console.debug({ level, message, meta });
+
+    logger.log(level, message, { meta }, function (error) {
       if (error) return callback(error);
       return callback();
     });
