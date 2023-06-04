@@ -7,6 +7,7 @@ aws iam create-policy --policy-name logtail-watch-policy --policy-document file:
 policyArn = $(aws iam list-policies --query 'Policies[?PolicyName==`logtail-watch-policy`][].[Arn]' --output text)
 
 aws iam attach-role-policy --policy-arn $policyArn --role-name logtail-watch-role
+npm run build
 aws lambda create-function --function-name logtail-watch \
   --runtime nodejs18.x \
   --zip-file fileb://lambda.zip \
