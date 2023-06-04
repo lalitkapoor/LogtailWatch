@@ -59,6 +59,7 @@ export function post(meta, data, callback) {
   const logtail = new Logtail(process.env.LOGTAIL_SOURCE_TOKEN);
   const logtailTransport = new LogtailTransport(logtail);
   const logger = winston.createLogger({
+    level: "fatal", // pino's logger is backwards
     transports: [logtailTransport],
     levels: config.logLevels,
   });
